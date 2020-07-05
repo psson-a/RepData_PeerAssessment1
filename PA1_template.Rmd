@@ -7,10 +7,18 @@ output:
 
 
 ## Loading and preprocessing the data
+```{r}
+data <- read.csv(unzip("activity.zip"))
+data$date <- as.Date(data$date)
 
+```
 
 
 ## What is mean total number of steps taken per day?
+```{r}
+steps_per_day <- aggregate(x = data$steps, by = list(data$date), FUN=sum)
+hist(steps_per_day$x)
+```
 
 
 
