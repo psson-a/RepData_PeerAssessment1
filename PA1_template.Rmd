@@ -42,7 +42,40 @@ mean_activity[which.max(mean_activity$x),'Group.1']
 ```
 
 ## Imputing missing values
+How many NA's are there in the dataset?
+```{r}
+sum(is.na(data))
+```
 
+Replace all missing values with mean step value from all days for that 5-minute interval
+```{r}
+library(dplyr)
+impute_mean <- function(x) replace(x, is.na(x), mean(x, na.rm = TRUE))
 
+nona_data <- data %>% group_by(interval) %>% mutate(steps = impute_mean(steps))
+```
+Perform the histogram, mean and median analyses with the new dataset
+```{r}
+steps_per_day2 <- aggregate(x = nona_data$steps, by = list(nona_data$date), FUN=sum)
+hist(steps_per_day2$x, main="Histogram of steps per day, NA's imputed", xlab="steps")
+```
 
+```{r}
+mean(steps_per_day2$x)
+```
+
+```{r}
+median(steps_per_day2$x)
+```
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Create a new variable to mark whether a date is on the weekend or not
+```{r}
+weekend=c("Saturday", "Sunday")
+nona_data <- nona_data %>% mutate (is_weekend = as.factor(weekdays(date) %in% weekend))
+levels(nona_data$is_weekend) <- c("weekday", "weekend")
+plotdata <- nona_data %>% group_by(is_weekend, interval) %>%summarize(mean_step = mean(steps))
+
+library(ggplot2)
+qplot(x=interval, y=mean_step, facets = is_weekend ~ ., data=plotdata, geom="line")
+```
