@@ -9,6 +9,7 @@ output:
 
 ## Loading and preprocessing the data
 
+
 ```r
 data <- read.csv(unzip("activity.zip"))
 data$date <- as.Date(data$date)
@@ -141,7 +142,7 @@ nona_data <- nona_data %>% mutate (is_weekend = as.factor(weekdays(date) %in% we
 levels(nona_data$is_weekend) <- c("weekday", "weekend")
 plotdata <- nona_data %>% group_by(is_weekend, interval) %>%summarize(mean_step = mean(steps))
 ```
-
+\ 
 Plot steps vs interval, categorised by weekday or weekend:
 
 
